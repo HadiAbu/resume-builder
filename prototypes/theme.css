@@ -1,0 +1,87 @@
+/* Resume Builder - minimal, dark-first theme.
+   Single source of truth for the prototype mockups. Ports into the app's
+   globals.css @theme block when feature 1 builds against this look. */
+
+:root {
+  /* surfaces */
+  --bg: #0a0b0d;
+  --surface: #131519;
+  --surface-hover: #191c21;
+  --border: #23262c;
+
+  /* text */
+  --text: #ededed;
+  --muted: #9aa1a9;
+  --faint: #5b6169;
+
+  /* accent */
+  --accent: #2dd4bf;
+  --accent-ink: #04211d;
+  --accent-muted: #1a3c38;
+
+  /* component states */
+  --tag-bg: #182024;
+  --tag-border: #262e34;
+  --tag-text: var(--muted);
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+
+  /* type */
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+
+  /* scale */
+  --radius: 10px;
+  --radius-sm: 6px;
+  --gap: 1rem;
+  --page-max-width: 960px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.page {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: var(--tag-bg);
+  border: 1px solid var(--tag-border);
+  color: var(--tag-text);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.tag--accent {
+  color: var(--accent);
+  border-color: var(--accent-muted);
+}
