@@ -65,7 +65,7 @@ If your first pass is just rough bullets, that is okay. Run `/overview` after
 filling both planning docs; it will flag plan-shape problems and can propose a
 cleaned-up checkbox version before generating the project overview.
 
-- [ ] 1. **Project browse/search UI** - keyword search over a project list, built against placeholder data
+- [x] 1. **Project browse/search UI** - keyword search over a project list, built against placeholder data
 - [ ] 2. **Backend + database skeleton** - Postgres schema and FastAPI service, all three services (web, backend, db) running via docker-compose
 - [ ] 3. **Owner authentication** - signup/login, sessions/JWT, routes protected for the owner vs public visitors
 - [ ] 4. **Profile page** - owner-editable personal details and photo, public read view
