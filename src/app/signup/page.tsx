@@ -1,6 +1,5 @@
 import { signupAction } from "@/actions/auth";
-
-const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8000";
+import { BACKEND_URL } from "@/lib/backend";
 
 export default async function SignupPage(props: PageProps<"/signup">) {
   const { error } = await props.searchParams;

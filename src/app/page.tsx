@@ -1,13 +1,24 @@
+import Link from "next/link";
+
 import { ProjectBrowser } from "@/components/projects/ProjectBrowser";
+import { BACKEND_URL } from "@/lib/backend";
 import { placeholderProjects } from "@/lib/placeholder-projects";
 
-export default function Home() {
+export default async function Home() {
+  const res = await fetch(`${BACKEND_URL}/auth/setup-status`, { cache: "no-store" });
+  const { needsSetup } = (await res.json()) as { needsSetup: boolean };
+
   return (
     <div className="mx-auto max-w-[960px] px-6 py-12 pb-20">
-      <header className="mb-10 flex items-center">
+      <header className="mb-10 flex items-center justify-between">
         <div className="text-[1.05rem] font-semibold tracking-tight text-text">
           hadi<span className="text-accent">.</span>dev
         </div>
+        {needsSetup && (
+          <Link href="/signup" className="text-sm text-muted hover:text-text">
+            Set up owner account
+          </Link>
+        )}
       </header>
 
       <h1 className="mb-1.5 text-[1.9rem] tracking-tight text-text">Projects</h1>
