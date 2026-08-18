@@ -106,6 +106,17 @@ checks do not make the Blueprint unusable.
 - Build: `npm run build`
 - Production server: `npm run start`
 - Lint: `npm run lint`
+- Backend dev server: one-time setup from `backend/`: `python -m venv .venv`
+  then `.venv/Scripts/pip install -r requirements.txt` (or
+  `.venv/bin/pip` on macOS/Linux). Then, with `DATABASE_URL` set (copy
+  `.env.example` from the repo root to `backend/.env`, or export it
+  directly), `.venv/Scripts/python -m uvicorn app.main:app --reload`
+  (http://localhost:8000, health at `/health` and `/health/db`)
+- Backend migrations: from `backend/`, `alembic upgrade head` (create a new
+  one with `alembic revision --autogenerate -m "<message>"`)
+- All services together: `docker compose up` (web on :3000, backend on :8000,
+  Postgres on :5432) - no `.env` needed, `docker-compose.yml` has working
+  local-dev defaults baked in
 
 No test runner is configured yet, so tests are not a gate. Run `/tests` or
 `$tests` to add one and update this section with the real test commands.

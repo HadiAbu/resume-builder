@@ -65,8 +65,23 @@
 
 ## Database
 
-> TODO: no database is configured yet. Fill this in once `project-plan.md` names
-> one (ORM, migration workflow, and how production runs migrations before start).
+- PostgreSQL, accessed from the FastAPI backend (`backend/`) via SQLAlchemy
+  (sync, `psycopg2-binary`) - no async driver, this is a skeleton, not a
+  performance-sensitive path yet.
+- Models live in `backend/app/db/models.py`; column names are snake_case,
+  matching Postgres convention. The frontend's `Project` type
+  (`src/types/project.ts`) is camelCase - any API layer that serializes these
+  models must alias to camelCase (e.g. Pydantic's `alias_generator=to_camel`)
+  rather than renaming the frontend type.
+- Migrations are Alembic (`backend/alembic.ini`, `backend/migrations/`).
+  Generate one with `alembic revision --autogenerate -m "<message>"` after
+  changing a model, review the generated file (autogenerate is a starting
+  point, not ground truth), then apply with `alembic upgrade head`.
+- Production runs migrations (`alembic upgrade head`) as a separate step
+  before the backend process starts - never inside the app's own startup
+  code, so a failed migration doesn't leave a half-started server.
+- `DATABASE_URL` is the only connection config; read via `pydantic-settings`
+  in `backend/app/config.py`, which fails fast at import time if it's unset.
 
 ## Data Fetching
 
