@@ -67,7 +67,15 @@ cleaned-up checkbox version before generating the project overview.
 
 - [x] 1. **Project browse/search UI** - keyword search over a project list, built against placeholder data
 - [x] 2. **Backend + database skeleton** - Postgres schema and FastAPI service, all three services (web, backend, db) running via docker-compose
-- [ ] 3. **Owner authentication** - signup/login, sessions/JWT, routes protected for the owner vs public visitors
+- [ ] 3. Owner authentication
+  - [x] 3a. **Bootstrap signup** - one-time owner account creation (only
+    possible while no `User` row exists), password hashing, backend-issued
+    session on success
+  - [ ] 3b. **Login** - sign-in page, backend session/JWT verification,
+    Next.js httpOnly cookie holding the session
+  - [ ] 3c. **Route protection** - gate owner-only routes, sign-out, a
+    minimal authenticated stub page proving protection actually works ahead
+    of feature 4's real profile page
 - [ ] 4. **Profile page** - owner-editable personal details and photo, public read view
 - [ ] 5. **GitHub project import** - fetch public repos (README, languages, topics) via GitHub's public API, wired to real data replacing the placeholder
 - [ ] 6. **AI keyword generation** - Claude API summarizes each project's README/metadata into tech and purpose keywords
