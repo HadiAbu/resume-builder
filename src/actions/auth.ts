@@ -4,6 +4,9 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { BACKEND_URL } from "@/lib/backend";
+import { requireSessionToken } from "@/lib/session";
+
+const MAX_PHOTO_BYTES = 2 * 1024 * 1024; // 2MB
 
 const SESSION_COOKIE = "session";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days, matches the JWT expiry
@@ -79,4 +82,54 @@ export async function loginAction(formData: FormData): Promise<void> {
   await setSessionCookie(data.token);
 
   redirect("/");
+}
+
+export async function updateProfileAction(formData: FormData): Promise<void> {
+  const token = await requireSessionToken();
+
+  const displayName = String(formData.get("displayName") ?? "");
+  const bio = String(formData.get("bio") ?? "") || null;
+  const role = String(formData.get("role") ?? "") || null;
+  const githubUrl = String(formData.get("githubUrl") ?? "") || null;
+  const linkedinUrl = String(formData.get("linkedinUrl") ?? "") || null;
+  const skills = String(formData.get("skills") ?? "")
+    .split(",")
+    .map((skill) => skill.trim())
+    .filter(Boolean);
+
+  let photoUrl: string | null = null;
+  const photo = formData.get("photo");
+
+  if (photo instanceof File && photo.size > 0) {
+    if (!photo.type.startsWith("image/")) {
+      redirect(`/dashboard?error=${encodeURIComponent("Photo must be an image file.")}`);
+    }
+    if (photo.size > MAX_PHOTO_BYTES) {
+      redirect(`/dashboard?error=${encodeURIComponent("Photo must be under 2MB.")}`);
+    }
+
+    const buffer = await photo.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString("base64");
+    photoUrl = `data:${photo.type};base64,${base64}`;
+  }
+
+  const response = await fetch(`${BACKEND_URL}/profile`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ displayName, bio, role, githubUrl, linkedinUrl, skills, photoUrl }),
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      redirect("/login");
+    }
+    const body: unknown = await response.json().catch(() => null);
+    const message = extractErrorMessage(body) ?? "Update failed. Please try again.";
+    redirect(`/dashboard?error=${encodeURIComponent(message)}`);
+  }
+
+  redirect("/dashboard?updated=1");
 }

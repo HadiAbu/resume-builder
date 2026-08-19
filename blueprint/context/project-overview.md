@@ -57,8 +57,17 @@ One row per deployment (the owner).
 - `display_name` (string) - shown on the profile/CV
 - `bio` (text, nullable) - personal summary
 - `photo_url` (string, nullable) - profile photo
+- `role` (string, nullable) - short title/headline shown under the name
+  (e.g. "Full-stack developer - FastAPI, React, Kubernetes")
+- `github_url` (string, nullable) - public GitHub profile link
+- `linkedin_url` (string, nullable) - public LinkedIn profile link
+- `skills` (string[]) - freeform skill tags shown on the public profile
 - `theme` (enum, default `minimal`) - selected UI preset; at least 3 values
 - `created_at`, `updated_at` (timestamp)
+
+> Added by feature 4 (profile page), expanding the fields locked in feature
+> 2's original skeleton - `role`, `github_url`, `linkedin_url`, `skills`.
+> Matches `prototypes/profile.html`, feature 4's design reference.
 
 ### Project
 

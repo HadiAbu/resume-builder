@@ -18,26 +18,31 @@ export default async function Home() {
         <div className="text-[1.05rem] font-semibold tracking-tight text-text">
           hadi<span className="text-accent">.</span>dev
         </div>
-        {needsSetup ? (
-          <Link href="/signup" className="text-sm text-muted hover:text-text">
-            Set up owner account
+        <div className="flex items-center gap-4">
+          <Link href="/profile" className="text-sm text-muted hover:text-text">
+            Profile
           </Link>
-        ) : user ? (
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="text-sm capitalize text-muted hover:text-text">
-              {user.displayName}
+          {needsSetup ? (
+            <Link href="/signup" className="text-sm text-muted hover:text-text">
+              Set up owner account
             </Link>
-            <form action={signOutAction}>
-              <button type="submit" className="text-sm text-muted hover:text-text">
-                Sign out
-              </button>
-            </form>
-          </div>
-        ) : (
-          <Link href="/login" className="text-sm text-muted hover:text-text">
-            Sign in
-          </Link>
-        )}
+          ) : user ? (
+            <>
+              <Link href="/dashboard" className="text-sm capitalize text-muted hover:text-text">
+                {user.displayName}
+              </Link>
+              <form action={signOutAction}>
+                <button type="submit" className="text-sm text-muted hover:text-text">
+                  Sign out
+                </button>
+              </form>
+            </>
+          ) : (
+            <Link href="/login" className="text-sm text-muted hover:text-text">
+              Sign in
+            </Link>
+          )}
+        </div>
       </header>
 
       <h1 className="mb-1.5 text-[1.9rem] tracking-tight text-text">Projects</h1>

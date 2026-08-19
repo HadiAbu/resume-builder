@@ -76,7 +76,7 @@ cleaned-up checkbox version before generating the project overview.
   - [x] 3c. **Route protection** - gate owner-only routes, sign-out, a
     minimal authenticated stub page proving protection actually works ahead
     of feature 4's real profile page
-- [ ] 4. **Profile page** - owner-editable personal details and photo, public read view
+- [x] 4. **Profile page** - owner-editable personal details and photo, public read view
 - [ ] 5. **GitHub project import** - fetch public repos (README, languages, topics) via GitHub's public API, wired to real data replacing the placeholder
 - [ ] 6. **AI keyword generation** - Claude API summarizes each project's README/metadata into tech and purpose keywords
 - [ ] 7. **Theme presets** - 3+ UI styles, selectable by the owner in profile settings

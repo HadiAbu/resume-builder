@@ -42,3 +42,14 @@ export async function requireCurrentUser(): Promise<CurrentUser> {
 
   return user;
 }
+
+export async function requireSessionToken(): Promise<string> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("session")?.value;
+
+  if (!token) {
+    redirect("/login");
+  }
+
+  return token;
+}

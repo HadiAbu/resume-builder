@@ -1,14 +1,109 @@
-import { signOutAction } from "@/actions/auth";
+import { signOutAction, updateProfileAction } from "@/actions/auth";
+import { BACKEND_URL } from "@/lib/backend";
 import { requireCurrentUser } from "@/lib/session";
 
-export default async function DashboardPage() {
-  const user = await requireCurrentUser();
+interface ProfileData {
+  displayName: string;
+  bio: string | null;
+  role: string | null;
+  githubUrl: string | null;
+  linkedinUrl: string | null;
+  skills: string[];
+}
+
+export default async function DashboardPage(props: PageProps<"/dashboard">) {
+  await requireCurrentUser();
+  const { error, updated } = await props.searchParams;
+
+  const res = await fetch(`${BACKEND_URL}/profile`, { cache: "no-store" });
+  const profile = (await res.json()) as ProfileData;
 
   return (
     <div className="mx-auto max-w-md px-6 py-16">
-      <h1 className="mb-2 text-xl capitalize text-text">Welcome, {user.displayName}</h1>
-      <p className="mb-6 text-muted">{user.email}</p>
-      <form action={signOutAction}>
+      <h1 className="mb-6 text-xl text-text">Edit profile</h1>
+
+      {updated && (
+        <p className="mb-4 rounded-md border border-accent-muted bg-tag-bg px-4 py-2 text-sm text-accent">
+          Profile updated.
+        </p>
+      )}
+      {error && (
+        <p className="mb-4 rounded-md border border-border bg-surface px-4 py-2 text-sm text-text">
+          {error}
+        </p>
+      )}
+
+      <form action={updateProfileAction} className="flex flex-col gap-4">
+        <label className="flex flex-col gap-1 text-sm text-muted">
+          Display name
+          <input
+            name="displayName"
+            type="text"
+            required
+            defaultValue={profile.displayName}
+            className="rounded-md border border-border bg-surface px-3 py-2 text-text outline-none focus:border-accent-muted"
+          />
+        </label>
+        <label className="flex flex-col gap-1 text-sm text-muted">
+          Role
+          <input
+            name="role"
+            type="text"
+            defaultValue={profile.role ?? ""}
+            placeholder="Full-stack developer - FastAPI, React, Kubernetes"
+            className="rounded-md border border-border bg-surface px-3 py-2 text-text outline-none focus:border-accent-muted"
+          />
+        </label>
+        <label className="flex flex-col gap-1 text-sm text-muted">
+          Bio
+          <textarea
+            name="bio"
+            rows={4}
+            defaultValue={profile.bio ?? ""}
+            className="rounded-md border border-border bg-surface px-3 py-2 text-text outline-none focus:border-accent-muted"
+          />
+        </label>
+        <label className="flex flex-col gap-1 text-sm text-muted">
+          GitHub URL
+          <input
+            name="githubUrl"
+            type="url"
+            defaultValue={profile.githubUrl ?? ""}
+            className="rounded-md border border-border bg-surface px-3 py-2 text-text outline-none focus:border-accent-muted"
+          />
+        </label>
+        <label className="flex flex-col gap-1 text-sm text-muted">
+          LinkedIn URL
+          <input
+            name="linkedinUrl"
+            type="url"
+            defaultValue={profile.linkedinUrl ?? ""}
+            className="rounded-md border border-border bg-surface px-3 py-2 text-text outline-none focus:border-accent-muted"
+          />
+        </label>
+        <label className="flex flex-col gap-1 text-sm text-muted">
+          Skills (comma-separated)
+          <input
+            name="skills"
+            type="text"
+            defaultValue={profile.skills.join(", ")}
+            placeholder="Python, FastAPI, React"
+            className="rounded-md border border-border bg-surface px-3 py-2 text-text outline-none focus:border-accent-muted"
+          />
+        </label>
+        <label className="flex flex-col gap-1 text-sm text-muted">
+          Photo (max 2MB)
+          <input name="photo" type="file" accept="image/*" className="text-text" />
+        </label>
+        <button
+          type="submit"
+          className="mt-2 rounded-md bg-accent px-4 py-2 font-medium text-accent-ink hover:opacity-90"
+        >
+          Save
+        </button>
+      </form>
+
+      <form action={signOutAction} className="mt-6">
         <button
           type="submit"
           className="rounded-md border border-border bg-surface px-4 py-2 text-sm text-text hover:bg-surface-hover"
