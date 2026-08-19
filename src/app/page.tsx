@@ -1,12 +1,16 @@
 import Link from "next/link";
 
+import { signOutAction } from "@/actions/auth";
 import { ProjectBrowser } from "@/components/projects/ProjectBrowser";
 import { BACKEND_URL } from "@/lib/backend";
 import { placeholderProjects } from "@/lib/placeholder-projects";
+import { getCurrentUser } from "@/lib/session";
 
 export default async function Home() {
   const res = await fetch(`${BACKEND_URL}/auth/setup-status`, { cache: "no-store" });
   const { needsSetup } = (await res.json()) as { needsSetup: boolean };
+
+  const user = needsSetup ? null : await getCurrentUser();
 
   return (
     <div className="mx-auto max-w-[960px] px-6 py-12 pb-20">
@@ -18,6 +22,17 @@ export default async function Home() {
           <Link href="/signup" className="text-sm text-muted hover:text-text">
             Set up owner account
           </Link>
+        ) : user ? (
+          <div className="flex items-center gap-4">
+            <Link href="/dashboard" className="text-sm capitalize text-muted hover:text-text">
+              {user.displayName}
+            </Link>
+            <form action={signOutAction}>
+              <button type="submit" className="text-sm text-muted hover:text-text">
+                Sign out
+              </button>
+            </form>
+          </div>
         ) : (
           <Link href="/login" className="text-sm text-muted hover:text-text">
             Sign in

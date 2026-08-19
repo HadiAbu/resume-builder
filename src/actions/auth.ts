@@ -52,6 +52,13 @@ export async function signupAction(formData: FormData): Promise<void> {
   redirect("/");
 }
 
+export async function signOutAction(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.delete({ name: SESSION_COOKIE, path: "/" });
+
+  redirect("/");
+}
+
 export async function loginAction(formData: FormData): Promise<void> {
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
