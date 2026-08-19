@@ -14,9 +14,13 @@ export default async function Home() {
         <div className="text-[1.05rem] font-semibold tracking-tight text-text">
           hadi<span className="text-accent">.</span>dev
         </div>
-        {needsSetup && (
+        {needsSetup ? (
           <Link href="/signup" className="text-sm text-muted hover:text-text">
             Set up owner account
+          </Link>
+        ) : (
+          <Link href="/login" className="text-sm text-muted hover:text-text">
+            Sign in
           </Link>
         )}
       </header>

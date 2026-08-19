@@ -18,6 +18,17 @@ function extractErrorMessage(body: unknown): string | null {
   return null;
 }
 
+async function setSessionCookie(token: string): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.set(SESSION_COOKIE, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: SESSION_MAX_AGE,
+    path: "/",
+  });
+}
+
 export async function signupAction(formData: FormData): Promise<void> {
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
@@ -36,15 +47,29 @@ export async function signupAction(formData: FormData): Promise<void> {
   }
 
   const data = (await response.json()) as { token: string };
+  await setSessionCookie(data.token);
 
-  const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE, data.token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: SESSION_MAX_AGE,
-    path: "/",
+  redirect("/");
+}
+
+export async function loginAction(formData: FormData): Promise<void> {
+  const email = String(formData.get("email") ?? "");
+  const password = String(formData.get("password") ?? "");
+
+  const response = await fetch(`${BACKEND_URL}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
   });
+
+  if (!response.ok) {
+    const body: unknown = await response.json().catch(() => null);
+    const message = extractErrorMessage(body) ?? "Login failed. Please try again.";
+    redirect(`/login?error=${encodeURIComponent(message)}`);
+  }
+
+  const data = (await response.json()) as { token: string };
+  await setSessionCookie(data.token);
 
   redirect("/");
 }

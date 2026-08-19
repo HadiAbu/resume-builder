@@ -71,7 +71,7 @@ cleaned-up checkbox version before generating the project overview.
   - [x] 3a. **Bootstrap signup** - one-time owner account creation (only
     possible while no `User` row exists), password hashing, backend-issued
     session on success
-  - [ ] 3b. **Login** - sign-in page, backend session/JWT verification,
+  - [x] 3b. **Login** - sign-in page, backend session/JWT verification,
     Next.js httpOnly cookie holding the session
   - [ ] 3c. **Route protection** - gate owner-only routes, sign-out, a
     minimal authenticated stub page proving protection actually works ahead

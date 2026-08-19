@@ -12,13 +12,18 @@ class SignupRequest(CamelModel):
     display_name: str
 
 
+class LoginRequest(CamelModel):
+    email: EmailStr
+    password: str
+
+
 class UserOut(CamelModel):
     id: str
     email: str
     display_name: str
 
 
-class SignupResponse(CamelModel):
+class AuthResponse(CamelModel):
     token: str
     user: UserOut
 
