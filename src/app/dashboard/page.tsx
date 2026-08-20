@@ -1,4 +1,4 @@
-import { signOutAction, updateProfileAction } from "@/actions/auth";
+import { importProjectsAction, signOutAction, updateProfileAction } from "@/actions/auth";
 import { BACKEND_URL } from "@/lib/backend";
 import { requireCurrentUser } from "@/lib/session";
 
@@ -11,9 +11,19 @@ interface ProfileData {
   skills: string[];
 }
 
+function parseGitHubUsername(githubUrl: string | null): string {
+  if (!githubUrl) return "";
+  try {
+    const segments = new URL(githubUrl).pathname.split("/").filter(Boolean);
+    return segments[0] ?? "";
+  } catch {
+    return "";
+  }
+}
+
 export default async function DashboardPage(props: PageProps<"/dashboard">) {
   await requireCurrentUser();
-  const { error, updated } = await props.searchParams;
+  const { error, updated, imported } = await props.searchParams;
 
   const res = await fetch(`${BACKEND_URL}/profile`, { cache: "no-store" });
   const profile = (await res.json()) as ProfileData;
@@ -25,6 +35,11 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
       {updated && (
         <p className="mb-4 rounded-md border border-accent-muted bg-tag-bg px-4 py-2 text-sm text-accent">
           Profile updated.
+        </p>
+      )}
+      {imported && (
+        <p className="mb-4 rounded-md border border-accent-muted bg-tag-bg px-4 py-2 text-sm text-accent">
+          Imported {imported} project{imported === "1" ? "" : "s"}.
         </p>
       )}
       {error && (
@@ -102,6 +117,28 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
           Save
         </button>
       </form>
+
+      <div className="mt-10 border-t border-border pt-6">
+        <h2 className="mb-4 text-lg text-text">Import from GitHub</h2>
+        <form action={importProjectsAction} className="flex flex-col gap-4">
+          <label className="flex flex-col gap-1 text-sm text-muted">
+            GitHub username
+            <input
+              name="githubUsername"
+              type="text"
+              required
+              defaultValue={parseGitHubUsername(profile.githubUrl)}
+              className="rounded-md border border-border bg-surface px-3 py-2 text-text outline-none focus:border-accent-muted"
+            />
+          </label>
+          <button
+            type="submit"
+            className="mt-2 rounded-md bg-accent px-4 py-2 font-medium text-accent-ink hover:opacity-90"
+          >
+            Import projects
+          </button>
+        </form>
+      </div>
 
       <form action={signOutAction} className="mt-6">
         <button

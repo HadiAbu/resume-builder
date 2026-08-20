@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { BACKEND_URL } from "@/lib/backend";
-import { placeholderProjects } from "@/lib/placeholder-projects";
+import type { Project } from "@/types/project";
 
 interface ProfileData {
   displayName: string;
@@ -34,7 +34,9 @@ export default async function ProfilePage() {
 
   const profile = (await res.json()) as ProfileData;
 
-  const recentProjects = placeholderProjects.slice(0, 3);
+  const projectsRes = await fetch(`${BACKEND_URL}/projects`, { cache: "no-store" });
+  const projects = (await projectsRes.json()) as Project[];
+  const recentProjects = projects.slice(0, 3);
 
   return (
     <div className="mx-auto max-w-[960px] px-6 py-12 pb-20">
@@ -99,32 +101,34 @@ export default async function ProfilePage() {
         </section>
       )}
 
-      <section>
-        <h2 className="mb-4 text-xs uppercase tracking-wider text-faint">Recent projects</h2>
-        <div className="mb-3 flex flex-col gap-3">
-          {recentProjects.map((project) => (
-            <div
-              key={project.id}
-              className="flex items-baseline justify-between rounded-sm border border-border bg-surface px-4 py-3"
-            >
-              <span className="font-medium text-text">{project.title}</span>
-              <div className="flex gap-1.5">
-                {project.techKeywords.slice(0, 2).map((keyword) => (
-                  <span
-                    key={keyword}
-                    className="inline-flex items-center whitespace-nowrap rounded-full border border-tag-border bg-tag-bg px-2.5 py-0.5 font-mono text-xs text-muted"
-                  >
-                    {keyword}
-                  </span>
-                ))}
+      {recentProjects.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-xs uppercase tracking-wider text-faint">Recent projects</h2>
+          <div className="mb-3 flex flex-col gap-3">
+            {recentProjects.map((project) => (
+              <div
+                key={project.id}
+                className="flex items-baseline justify-between rounded-sm border border-border bg-surface px-4 py-3"
+              >
+                <span className="font-medium text-text">{project.title}</span>
+                <div className="flex gap-1.5">
+                  {project.techKeywords.slice(0, 2).map((keyword) => (
+                    <span
+                      key={keyword}
+                      className="inline-flex items-center whitespace-nowrap rounded-full border border-tag-border bg-tag-bg px-2.5 py-0.5 font-mono text-xs text-muted"
+                    >
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-        <Link href="/" className="text-sm text-accent hover:underline">
-          View all projects &rarr;
-        </Link>
-      </section>
+            ))}
+          </div>
+          <Link href="/" className="text-sm text-accent hover:underline">
+            View all projects &rarr;
+          </Link>
+        </section>
+      )}
     </div>
   );
 }

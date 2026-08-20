@@ -133,3 +133,29 @@ export async function updateProfileAction(formData: FormData): Promise<void> {
 
   redirect("/dashboard?updated=1");
 }
+
+export async function importProjectsAction(formData: FormData): Promise<void> {
+  const token = await requireSessionToken();
+  const githubUsername = String(formData.get("githubUsername") ?? "");
+
+  const response = await fetch(`${BACKEND_URL}/projects/import`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ githubUsername }),
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      redirect("/login");
+    }
+    const body: unknown = await response.json().catch(() => null);
+    const message = extractErrorMessage(body) ?? "Import failed. Please try again.";
+    redirect(`/dashboard?error=${encodeURIComponent(message)}`);
+  }
+
+  const data = (await response.json()) as { importedCount: number };
+  redirect(`/dashboard?imported=${data.importedCount}`);
+}

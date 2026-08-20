@@ -3,12 +3,16 @@ import Link from "next/link";
 import { signOutAction } from "@/actions/auth";
 import { ProjectBrowser } from "@/components/projects/ProjectBrowser";
 import { BACKEND_URL } from "@/lib/backend";
-import { placeholderProjects } from "@/lib/placeholder-projects";
 import { getCurrentUser } from "@/lib/session";
+import type { Project } from "@/types/project";
 
 export default async function Home() {
-  const res = await fetch(`${BACKEND_URL}/auth/setup-status`, { cache: "no-store" });
-  const { needsSetup } = (await res.json()) as { needsSetup: boolean };
+  const [setupRes, projectsRes] = await Promise.all([
+    fetch(`${BACKEND_URL}/auth/setup-status`, { cache: "no-store" }),
+    fetch(`${BACKEND_URL}/projects`, { cache: "no-store" }),
+  ]);
+  const { needsSetup } = (await setupRes.json()) as { needsSetup: boolean };
+  const projects = (await projectsRes.json()) as Project[];
 
   const user = needsSetup ? null : await getCurrentUser();
 
@@ -51,7 +55,26 @@ export default async function Home() {
         &quot;scraping&quot;, &quot;Kubernetes&quot;.
       </p>
 
-      <ProjectBrowser projects={placeholderProjects} />
+      {projects.length > 0 ? (
+        <ProjectBrowser projects={projects} />
+      ) : (
+        <div className="px-4 py-16 text-center text-muted">
+          <h3 className="mb-1 text-[1.05rem] text-text">No projects imported yet</h3>
+          <p>
+            {user ? (
+              <>
+                Go to{" "}
+                <Link href="/dashboard" className="text-accent hover:underline">
+                  the dashboard
+                </Link>{" "}
+                to import from GitHub.
+              </>
+            ) : (
+              "Check back once the owner has imported their projects."
+            )}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

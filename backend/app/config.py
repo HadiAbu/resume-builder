@@ -6,6 +6,7 @@ class Settings(BaseSettings):
 
     database_url: str
     session_secret: str
+    github_token: str | None = None
 
 
 settings = Settings()

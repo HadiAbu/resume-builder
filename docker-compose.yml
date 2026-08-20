@@ -20,6 +20,7 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-resume_builder}:${POSTGRES_PASSWORD:-resume_builder}@db:5432/${POSTGRES_DB:-resume_builder}
       SESSION_SECRET: ${SESSION_SECRET:-local-dev-only-secret-not-for-production-use}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
     ports:
       - "8000:8000"
     depends_on:

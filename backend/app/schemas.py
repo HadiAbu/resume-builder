@@ -52,3 +52,23 @@ class ProfileUpdateRequest(CamelModel):
     linkedin_url: str | None = None
     skills: list[str] = Field(default_factory=list)
     photo_url: str | None = Field(default=None, max_length=2_800_000)
+
+
+class ProjectOut(CamelModel):
+    id: str
+    title: str
+    description: str
+    homepage_url: str | None
+    github_repo: str
+    languages: list[str]
+    topics: list[str]
+    tech_keywords: list[str]
+    purpose_keywords: list[str]
+
+
+class ImportRequest(CamelModel):
+    github_username: str = Field(min_length=1)
+
+
+class ImportResponse(CamelModel):
+    imported_count: int
