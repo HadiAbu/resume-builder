@@ -143,3 +143,16 @@ Screens implied by the features above (exact routes TBD per-feature):
 >
 > TODO: health check path and domain, per `project-plan.md` §8 - decide
 > before feature 8 (deployment readiness).
+>
+> TODO: HTTPS is a hard requirement for feature 8, not optional - the session
+> cookie (feature 3a) is `secure: true` in production, and browsers silently
+> refuse to store `Secure` cookies over plain HTTP. Without TLS configured,
+> login will appear to succeed but the cookie never sets, and the app will
+> look broken with no obvious cause. Confirm the TLS approach (reverse proxy,
+> Let's Encrypt, etc.) as part of feature 8, not after.
+>
+> TODO: no account recovery path exists - single-tenant, no password reset.
+> If the owner forgets their password there is currently no self-service way
+> back in except direct database access. Decide explicitly before a real
+> deployment: build a minimal recovery flow, or formally accept manual DB
+> reset as the permanent answer.
